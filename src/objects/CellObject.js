@@ -25,4 +25,12 @@ export default class CellObject {
   getSurroundingMines() {
     return this.surroundingMines;
   }
+
+  getIsSelected(){
+    return this.selected;
+  }
+
+  setIsSelected(selected){
+    this.selected = selected;
+  }
 }
