@@ -24,11 +24,11 @@ const GameBoard = ({ rows, columns, mines }) => {
 
     function createGameRow(rowNum, numOfColumns, gameBoard) {
       const rowCells = [];
-      for (let j = 0; j < numOfColumns; j++) {
-        const cell = gameBoard.getCell(rowNum, j);
-        rowCells.push(<Cell cell={cell}></Cell>);
+      for (let colNum = 0; colNum < numOfColumns; colNum++) {
+        const cell = gameBoard.getCell(rowNum, colNum);
+        rowCells.push(<Cell cell={cell} key={colNum}></Cell>);
       }
-      return <div className="flex-row">{rowCells}</div>;
+      return <div className="flex-row" key={rowNum}>{rowCells}</div>;
     }
 
     setgrid(createGameBoard(rows, columns, mines));
