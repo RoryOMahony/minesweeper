@@ -5,7 +5,7 @@ import "./Minesweeper.css";
 export const Minesweeper = () => {
   return (
     <div id="game">
-      <GameBoard rows={10} columns={10}></GameBoard>
+      <GameBoard rows={10} columns={10} mines={10}></GameBoard>
     </div>
   );
 };
