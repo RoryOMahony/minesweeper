@@ -1,4 +1,15 @@
-.cell{
+.cell-container{
   width: 30px;
   height: 30px;
+  border: solid #808080;
+  border-width: 0 1px 1px 0;
+}
+
+.cell{
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  border-style: outset;
+  border-color: #ececec;
+  border-width: 2px;
 }
