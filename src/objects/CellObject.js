@@ -10,6 +10,14 @@ export default class CellObject {
     this.column = column;
   }
 
+  getRow(){
+    return this.row;
+  }
+
+  getColumn(){
+    return this.column;
+  }
+
   setIsMine(isMine) {
     this.isMine = isMine;
   }
