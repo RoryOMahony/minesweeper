@@ -4,8 +4,9 @@ import "../Flex.css";
 
 const Cell = ({ cell }) => {
   const [selected, setSelected] = useState(false);
+
   function handleClick() {
-    if (!cell.getIsSelected()) {
+    if (!selected) {
       cell.setIsSelected(true);
       setSelected(true);
     }
