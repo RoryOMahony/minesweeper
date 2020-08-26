@@ -1,8 +1,31 @@
-import React from "react";
+import React, { useMemo } from "react";
 import "./Cell.css";
 import "../Flex.css";
 
 const Cell = ({ cell, cellSelectedCallback }) => {
+  const borderStyle = useMemo(() => {
+    if (cell.selected) {
+      return {
+        borderStyle: "none"
+      };
+    } else {
+      return {
+        borderStyle: "outset"
+      };
+    }
+  }, [cell.selected]);
+  useMemo(() => {}, []);
+
+  const displayValue = useMemo(() => {
+    if (!cell.selected || cell.surroundingMines === 0) {
+      return "";
+    }
+    if (cell.isMine) {
+      return "M";
+    }
+    return cell.surroundingMines;
+  }, [cell.selected]);
+
   function handleClick() {
     if (!cell.selected) {
       cellSelectedCallback(cell);
@@ -13,19 +36,15 @@ const Cell = ({ cell, cellSelectedCallback }) => {
     event.preventDefault();
   }
 
-  let toDisplay = "";
-  if (cell.selected) {
-    toDisplay = cell.isMine ? "M" : cell.surroundingMines;
-  }
-
   return (
     <div className="cell-container">
       <div
+        style={borderStyle}
         className="cell flex-row flex-main-axis-center"
         onClick={handleClick}
         onContextMenu={e => handleRightClick(e)}
       >
-        {toDisplay}
+        {displayValue}
       </div>
     </div>
   );
