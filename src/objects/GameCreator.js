@@ -1,5 +1,10 @@
 import CellObject from "./CellObject";
-import GameBoardObject from "./GameBoardObject";
+import GameBoardObject, {
+  getRowCount,
+  getColumnCount,
+  getCell,
+  getSurroundingCells
+} from "./GameBoardObject";
 
 export default class GameCreator {
   createGame(rows, columns, mines) {
@@ -11,36 +16,35 @@ export default class GameCreator {
 }
 
 function createBlankGameBoard(rows, columns) {
-  let rowMap = new Map();
+  let rowMap = [];
 
   for (let i = 0; i < rows; i++) {
     let row = createRow(i, columns);
-    rowMap.set(i, row);
+    rowMap.push(row);
   }
 
   return new GameBoardObject(rowMap);
 }
 
 function createRow(row, numOfColumns) {
-  let columnMap = new Map();
+  let columnMap = [];
   for (let i = 0; i < numOfColumns; i++) {
-    columnMap.set(i, new CellObject(row, i));
+    columnMap.push(new CellObject(row, i));
   }
   return columnMap;
 }
 
 function populateMines(gameBoard, mines) {
-  const maxRowNumber = gameBoard.getRowCount();
-  const maxColumnNumber = gameBoard.getColumnCount();
+  const maxRowNumber = getRowCount(gameBoard);
+  const maxColumnNumber = getColumnCount(gameBoard);
   for (let i = 0; i < mines; i++) {
     let minePlaced = false;
-
     while (!minePlaced) {
       const row = generateRandomNumber(maxRowNumber);
       const column = generateRandomNumber(maxColumnNumber);
-      const cell = gameBoard.getCell(row, column);
-      if (!cell.getIsMine()) {
-        cell.setIsMine(true);
+      const cell = getCell(gameBoard, row, column);
+      if (!cell.isMine) {
+        cell.isMine = true;
         minePlaced = true;
       }
     }
@@ -52,15 +56,15 @@ function generateRandomNumber(max) {
 }
 
 function populateSurroundingMines(gameBoard) {
-  const rows = gameBoard.getRowCount();
-  const columns = gameBoard.getColumnCount();
+  const rows = getRowCount(gameBoard);
+  const columns = getColumnCount(gameBoard);
 
   for (let row = 0; row < rows; row++) {
     for (let column = 0; column < columns; column++) {
-      const cell = gameBoard.getCell(row, column);
-      const surroundingCells = gameBoard.getSurroundingCells(row, column);
+      const cell = getCell(gameBoard, row, column);
+      const surroundingCells = getSurroundingCells(gameBoard, row, column);
       const surroundingMines = countMines(surroundingCells);
-      cell.setSurroundingMines(surroundingMines);
+      cell.surroundingMines = surroundingMines;
     }
   }
 }
@@ -68,7 +72,7 @@ function populateSurroundingMines(gameBoard) {
 function countMines(cells) {
   let mines = 0;
   cells.forEach(cell => {
-    if (cell.getIsMine()) {
+    if (cell.isMine) {
       mines += 1;
     }
   });
