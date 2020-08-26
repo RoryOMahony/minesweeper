@@ -24,7 +24,7 @@ const Cell = ({ cell, cellSelectedCallback }) => {
       return "M";
     }
     return cell.surroundingMines;
-  }, [cell.selected]);
+  }, [cell.selected, cell.isMine, cell.surroundingMines]);
 
   function handleClick() {
     if (!cell.selected) {
