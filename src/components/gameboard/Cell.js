@@ -50,7 +50,7 @@ const Cell = ({ cell, leftClickCallback, rightClickCallBack }) => {
     <div className="cell-container">
       <div
         style={borderStyle}
-        className={`cell flex-row flex-main-axis-center ${numberColourClassName}`}
+        className={`cell flex-row flex-main-axis-center noselect ${numberColourClassName}`}
         onClick={handleClick}
         onContextMenu={e => handleRightClick(e)}
       >

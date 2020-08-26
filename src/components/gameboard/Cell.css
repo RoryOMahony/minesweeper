@@ -1,11 +1,11 @@
-.cell-container{
+.cell-container {
   width: 30px;
   height: 30px;
   border: solid #808080;
   border-width: 0 1px 1px 0;
 }
 
-.cell{
+.cell {
   box-sizing: border-box;
   width: 100%;
   height: 100%;
@@ -15,34 +15,43 @@
   cursor: default;
 }
 
-.number-1{
-  color: #0018fd
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
 }
 
-.number-2{
-  color: #007e00
+.number-1 {
+  color: #0018fd;
 }
 
-.number-3{
-  color: #fd121a
+.number-2 {
+  color: #007e00;
 }
 
-.number-4{
-  color: #000680
+.number-3 {
+  color: #fd121a;
 }
 
-.number-5{
-  color: #810408
+.number-4 {
+  color: #000680;
 }
 
-.number-6{
-  color: #00807e
+.number-5 {
+  color: #810408;
 }
 
-.number-7{
-  color: #000000
+.number-6 {
+  color: #00807e;
 }
 
-.number-8{
-  color: #808080
+.number-7 {
+  color: #000000;
+}
+
+.number-8 {
+  color: #808080;
 }
