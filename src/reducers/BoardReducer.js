@@ -2,7 +2,8 @@ import { getCell, setCell } from "../objects/GameBoardObject";
 
 export const BOARD_REDUCER_ACTIONS = {
   CELL_SELECTED: "Cell_Selected",
-  CELLS_SELECTED: "Cells_Selected"
+  CELLS_SELECTED: "Cells_Selected",
+  TOGGLE_FLAGGED: "Toggle_Flagged"
 };
 
 export const BoardReducer = (state, dispatch) => {
@@ -23,7 +24,16 @@ export const BoardReducer = (state, dispatch) => {
         setCell(updatedState, cell.row, cell.column, updatedCell);
       });
       return updatedState;
+    case BOARD_REDUCER_ACTIONS.TOGGLE_FLAGGED:
+      toggleFlagged(dispatch.payload, updatedState);
+      return updatedState;
     default:
       return state;
+  }
+
+  function toggleFlagged(cell, state) {
+    const { row, column } = cell;
+    const updatedCell = { ...cell, isFlagged: !cell.isFlagged };
+    setCell(state, row, column, updatedCell);
   }
 };

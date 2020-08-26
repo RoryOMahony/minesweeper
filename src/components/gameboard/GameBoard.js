@@ -7,6 +7,7 @@ import {
   BoardReducer,
   BOARD_REDUCER_ACTIONS
 } from "../../reducers/BoardReducer";
+import UnselectedCell from "./UnselectedCell";
 
 const GameBoard = ({ rows, columns, mines }) => {
   const [gameBoard, gameBoardDispatch] = useReducer(
@@ -28,6 +29,13 @@ const GameBoard = ({ rows, columns, mines }) => {
     );
   }
 
+  function handleCellRightClick(cell) {
+    gameBoardDispatch({
+      type: BOARD_REDUCER_ACTIONS.TOGGLE_FLAGGED,
+      payload: cell
+    });
+  }
+
   return (
     <div>
       {gameBoard.board.map((row, index) => {
@@ -35,7 +43,8 @@ const GameBoard = ({ rows, columns, mines }) => {
           return (
             <Cell
               cell={cell}
-              cellSelectedCallback={handleCellSelected}
+              leftClickCallback={handleCellSelected}
+              rightClickCallBack={handleCellRightClick}
               key={cell.column}
             ></Cell>
           );

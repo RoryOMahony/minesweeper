@@ -3,11 +3,11 @@ export default class CellObject {
   column;
   selected = false;
   isMine = false;
+  isFlagged = false;
   surroundingMines;
 
   constructor(row, column) {
     this.row = row;
     this.column = column;
   }
-
 }
