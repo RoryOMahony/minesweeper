@@ -1,4 +1,4 @@
-import React, { useRef, useReducer } from "react";
+import React, { useRef, useReducer, useEffect } from "react";
 import Cell from "./Cell";
 import GameCreator from "../../objects/GameCreator";
 import "../Flex.css";
@@ -27,6 +27,21 @@ const GameBoard = ({ rows, columns, mines }) => {
       gameBoardDispatch
     );
   }
+
+  useEffect(() => {
+    // every cell that isn't a mine needs to be selected
+    for (let row of gameBoard.board) {
+      const selectedAllNonMines = row
+        .filter(cell => !cell.isMine)
+        .every(cell => cell.selected);
+      if (!selectedAllNonMines) {
+        console.log("Not won");
+        return;
+      }
+    }
+
+    console.log("Has won");
+  }, [gameBoard]);
 
   function handleCellRightClick(cell) {
     gameBoardDispatch({
