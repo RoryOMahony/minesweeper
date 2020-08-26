@@ -31,6 +31,8 @@ const Cell = ({ cell, leftClickCallback, rightClickCallBack }) => {
     return cell.surroundingMines === 0 ? "" : cell.surroundingMines;
   }, [cell.selected, cell.isMine, cell.surroundingMines, cell.isFlagged]);
 
+  const numberColourClassName = cell.isMine ? "" : `number-${cell.surroundingMines}`;
+
   function handleClick() {
     if (!cell.selected && !cell.isFlagged) {
       leftClickCallback(cell);
@@ -48,7 +50,7 @@ const Cell = ({ cell, leftClickCallback, rightClickCallBack }) => {
     <div className="cell-container">
       <div
         style={borderStyle}
-        className="cell flex-row flex-main-axis-center"
+        className={`cell flex-row flex-main-axis-center ${numberColourClassName}`}
         onClick={handleClick}
         onContextMenu={e => handleRightClick(e)}
       >
