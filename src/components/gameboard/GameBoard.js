@@ -2,7 +2,7 @@ import React, { useRef, useReducer } from "react";
 import Cell from "./Cell";
 import GameCreator from "../../objects/GameCreator";
 import "../Flex.css";
-import NoSurroundingMinesCellUpdater from "../../objects/NoSurroundingMinesCellUpdater";
+import SurroundingCellUpdater from "../../objects/SurroundingCellUpdater";
 import {
   BoardReducer,
   BOARD_REDUCER_ACTIONS
@@ -14,7 +14,7 @@ const GameBoard = ({ rows, columns, mines }) => {
     new GameCreator().createGame(rows, columns, mines)
   );
   const noSurroundingMinesCellUpdatedRef = useRef(
-    new NoSurroundingMinesCellUpdater()
+    new SurroundingCellUpdater()
   );
 
   function handleCellSelected(cell) {
