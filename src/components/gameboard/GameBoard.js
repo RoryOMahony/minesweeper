@@ -13,7 +13,7 @@ const GameBoard = ({ rows, columns, mines }) => {
     BoardReducer,
     new GameCreator().createGame(rows, columns, mines)
   );
-  const noSurroundingMinesCellUpdatedRef = useRef(
+  const surroundingCellUpdaterdRef = useRef(
     new SurroundingCellUpdater()
   );
 
@@ -24,7 +24,7 @@ const GameBoard = ({ rows, columns, mines }) => {
       payload: cell
     });
 
-    noSurroundingMinesCellUpdatedRef.current.handleCellSelected(
+    surroundingCellUpdaterdRef.current.handleCellSelected(
       cell,
       gameBoard,
       gameBoardDispatch
