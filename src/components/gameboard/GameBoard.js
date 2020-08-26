@@ -13,12 +13,9 @@ const GameBoard = ({ rows, columns, mines }) => {
     BoardReducer,
     new GameCreator().createGame(rows, columns, mines)
   );
-  const surroundingCellUpdaterdRef = useRef(
-    new SurroundingCellUpdater()
-  );
+  const surroundingCellUpdaterdRef = useRef(new SurroundingCellUpdater());
 
   function handleCellSelected(cell) {
-    console.log(cell);
     gameBoardDispatch({
       type: BOARD_REDUCER_ACTIONS.CELL_SELECTED,
       payload: cell
