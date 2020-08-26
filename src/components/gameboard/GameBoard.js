@@ -7,7 +7,6 @@ import {
   BoardReducer,
   BOARD_REDUCER_ACTIONS
 } from "../../reducers/BoardReducer";
-import UnselectedCell from "./UnselectedCell";
 
 const GameBoard = ({ rows, columns, mines }) => {
   const [gameBoard, gameBoardDispatch] = useReducer(
