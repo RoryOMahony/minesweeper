@@ -1,20 +1,21 @@
-import React, { useState } from "react";
+import React from "react";
 import "./Cell.css";
 import "../Flex.css";
 
-const Cell = ({ cell }) => {
-  const [selected, setSelected] = useState(false);
-
+const Cell = ({ cell, cellSelectedCallback }) => {
   function handleClick() {
-    if (!selected) {
-      cell.setIsSelected(true);
-      setSelected(true);
+    if (!cell.selected) {
+      cellSelectedCallback(cell);
     }
   }
 
+  function handleRightClick(event) {
+    event.preventDefault();
+  }
+
   let toDisplay = "";
-  if (cell.getIsSelected()) {
-    toDisplay = cell.getIsMine() ? "M" : cell.getSurroundingMines();
+  if (cell.selected) {
+    toDisplay = cell.isMine ? "M" : cell.surroundingMines;
   }
 
   return (
@@ -22,6 +23,7 @@ const Cell = ({ cell }) => {
       <div
         className="cell flex-row flex-main-axis-center"
         onClick={handleClick}
+        onContextMenu={e => handleRightClick(e)}
       >
         {toDisplay}
       </div>
