@@ -14,7 +14,6 @@ const Cell = ({ cell, leftClickCallback, rightClickCallBack }) => {
       };
     }
   }, [cell.selected]);
-  useMemo(() => {}, []);
 
   const displayValue = useMemo(() => {
     if (!cell.selected) {
