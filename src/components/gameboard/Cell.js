@@ -33,7 +33,7 @@ const Cell = ({ cell, leftClickCallback, rightClickCallBack }) => {
   }, [cell.selected, cell.isMine, cell.surroundingMines, cell.isFlagged]);
 
   function handleClick() {
-    if (!cell.selected) {
+    if (!cell.selected && !cell.isFlagged) {
       leftClickCallback(cell);
     }
   }
