@@ -1,7 +1,15 @@
+import { GAME_STATE } from "./GameState";
+
 export default class GameBoardObject {
+  gameState = GAME_STATE.IN_PROGRESS;
+
   constructor(board) {
     this.board = board;
   }
+}
+
+export function setGameState(gameBoard, gameState) {
+  gameBoard.gameState = gameState;
 }
 
 export function getRowCount(gameBoard) {

@@ -1,12 +1,14 @@
 import {
   getCell,
   setCell,
-  getSurroundingCells
+  getSurroundingCells,
+  setGameState
 } from "../objects/GameBoardObject";
+import { GAME_STATE } from "../objects/GameState";
 
 export const BOARD_REDUCER_ACTIONS = {
   UNCOVER_CELL: "UNCOVER_CELL",
-  TOGGLE_FLAGGED: "Toggle_Flagged",
+  TOGGLE_FLAGGED: "TOGGLE_FLAGGED",
   UNCOVER_SURROUNDING_CELLS: "UNCOVER_SURROUNDING_CELLS"
 };
 
@@ -18,7 +20,7 @@ export const BoardReducer = (state, dispatch) => {
       const updatedCell = setCellUncovered(dispatch.payload, updatedState);
 
       if (updatedCell.isMine) {
-        console.log("LOST");
+        setGameState(updatedState, GAME_STATE.LOST);
         return updatedState;
       }
 
@@ -27,18 +29,10 @@ export const BoardReducer = (state, dispatch) => {
           updatedCell,
           updatedState
         );
-
         uncoveredCells.forEach(cell => setCellUncovered(cell, updatedState));
-
-        if (uncoveredCells.some(cell => cell.isMine)) {
-          console.log("LOST");
-          return updatedState;
-        }
       }
 
-      if (uncoveredAllNonMines(updatedState)) {
-        console.log("WON");
-      }
+      setGameState(updatedState, calculateGameState(updatedState));
 
       return updatedState;
 
@@ -49,23 +43,16 @@ export const BoardReducer = (state, dispatch) => {
         cell => cell.isFlagged
       );
 
-      if (flaggedSurroundingCells.length === dispatch.payload.surroundingMines) {
-        // todo refactor this code and the code above so that the game state is updated when any cells have been uncovered.
+      if (
+        flaggedSurroundingCells.length === dispatch.payload.surroundingMines
+      ) {
         const uncoveredCells = recursivelyUncoverAllSurroundingCells(
           dispatch.payload,
           updatedState
         );
-
         uncoveredCells.forEach(cell => setCellUncovered(cell, updatedState));
 
-        if (uncoveredCells.some(cell => cell.isMine)) {
-          console.log("LOST");
-          return updatedState;
-        }
-
-        if (uncoveredAllNonMines(updatedState)) {
-          console.log("WON");
-        }
+        setGameState(updatedState, calculateGameState(updatedState));
       }
       return updatedState;
 
@@ -90,6 +77,31 @@ function setCellUncovered(cell, gameBoard) {
   const updatedCell = { ...currentCell, selected: true };
   setCell(gameBoard, row, column, updatedCell);
   return updatedCell;
+}
+
+function calculateGameState(gameBoard) {
+  let uncoveredAllNoneMines = true;
+
+  for (let row of gameBoard.board) {
+    const mineSelectedInRow = row
+      .filter(cell => cell.isMine)
+      .some(cell => cell.selected);
+
+    if (mineSelectedInRow) {
+      return GAME_STATE.LOST;
+    }
+
+    const selectedAllNonMinesInRow = row
+      .filter(cell => !cell.isMine)
+      .every(cell => cell.selected);
+    if (!selectedAllNonMinesInRow) {
+      uncoveredAllNoneMines = false;
+    }
+  }
+  if (uncoveredAllNoneMines) {
+    return GAME_STATE.WON;
+  }
+  return GAME_STATE.IN_PROGRESS;
 }
 
 function recursivelyUncoverAllSurroundingCells(
@@ -128,17 +140,4 @@ function uncoverSurroundingCells(cell, gameBoard) {
   });
 
   return uncoveredCells;
-}
-
-function uncoveredAllNonMines(gameBoard) {
-  for (let row of gameBoard.board) {
-    const selectedAllNonMinesInRow = row
-      .filter(cell => !cell.isMine)
-      .every(cell => cell.selected);
-    if (!selectedAllNonMinesInRow) {
-      return false;
-    }
-  }
-
-  return true;
 }
