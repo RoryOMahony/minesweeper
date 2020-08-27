@@ -1,21 +1,48 @@
-import { getCell, setCell } from "../objects/GameBoardObject";
+import {
+  getCell,
+  setCell,
+  getSurroundingCells
+} from "../objects/GameBoardObject";
 
 export const BOARD_REDUCER_ACTIONS = {
-  CELL_SELECTED: "Cell_Selected",
+  UNCOVER_CELL: "UNCOVER_CELL",
   CELLS_SELECTED: "Cells_Selected",
-  TOGGLE_FLAGGED: "Toggle_Flagged"
+  TOGGLE_FLAGGED: "Toggle_Flagged",
+  UNCOVER_SURROUNDING_CELLS: "UNCOVER_SURROUNDING_CELLS"
 };
 
 export const BoardReducer = (state, dispatch) => {
   const updatedState = { ...state };
 
   switch (dispatch.type) {
-    case BOARD_REDUCER_ACTIONS.CELL_SELECTED:
-      const { row, column } = dispatch.payload;
-      const currentCell = getCell(state, row, column);
-      const updatedCell = { ...currentCell, selected: true };
-      setCell(updatedState, row, column, updatedCell);
+    case BOARD_REDUCER_ACTIONS.UNCOVER_CELL:
+      const updatedCell = setCellUncovered(dispatch.payload, updatedState);
+
+      if (updatedCell.isMine) {
+        console.log("LOST");
+        return updatedState;
+      }
+
+      if (updatedCell.surroundingMines === 0) {
+        const uncoveredCells = recursivelyUncoverAllSurroundingCells(
+          updatedCell,
+          updatedState
+        );
+
+        uncoveredCells.forEach(cell => setCellUncovered(cell, updatedState));
+
+        if (uncoveredCells.some(cell => cell.isMine)) {
+          console.log("LOST");
+          return updatedState;
+        }
+      }
+
+      if (uncoveredAllNonMines(updatedState)) {
+        console.log("WON");
+      }
+
       return updatedState;
+
     case BOARD_REDUCER_ACTIONS.CELLS_SELECTED:
       const cellsToSelect = dispatch.payload;
       cellsToSelect.forEach(cell => {
@@ -24,9 +51,11 @@ export const BoardReducer = (state, dispatch) => {
         setCell(updatedState, cell.row, cell.column, updatedCell);
       });
       return updatedState;
+
     case BOARD_REDUCER_ACTIONS.TOGGLE_FLAGGED:
       toggleFlagged(dispatch.payload, updatedState);
       return updatedState;
+
     default:
       return state;
   }
@@ -37,3 +66,62 @@ export const BoardReducer = (state, dispatch) => {
     setCell(state, row, column, updatedCell);
   }
 };
+
+function setCellUncovered(cell, gameBoard) {
+  const { row, column } = cell;
+  const currentCell = getCell(gameBoard, row, column);
+  const updatedCell = { ...currentCell, selected: true };
+  setCell(gameBoard, row, column, updatedCell);
+  return updatedCell;
+}
+
+function recursivelyUncoverAllSurroundingCells(
+  cell,
+  gameBoard,
+  allUncoveredCells = []
+) {
+  const uncoveredCells = uncoverSurroundingCells(cell, gameBoard);
+
+  uncoveredCells.forEach(cell => {
+    allUncoveredCells.push(cell);
+
+    if (!cell.isMine && cell.surroundingMines === 0) {
+      recursivelyUncoverAllSurroundingCells(cell, gameBoard, allUncoveredCells);
+    }
+  });
+
+  return allUncoveredCells;
+}
+
+function uncoverSurroundingCells(cell, gameBoard) {
+  let uncoveredCells = [];
+
+  const surroundingCells = getSurroundingCells(
+    gameBoard,
+    cell.row,
+    cell.column
+  );
+  const surroundingCellsToUncover = surroundingCells.filter(
+    cell => !cell.isFlagged && !cell.selected
+  );
+
+  surroundingCellsToUncover.forEach(cell => {
+    cell.selected = true;
+    uncoveredCells.push(cell);
+  });
+
+  return uncoveredCells;
+}
+
+function uncoveredAllNonMines(gameBoard) {
+  for (let row of gameBoard.board) {
+    const selectedAllNonMinesInRow = row
+      .filter(cell => !cell.isMine)
+      .every(cell => cell.selected);
+    if (!selectedAllNonMinesInRow) {
+      return false;
+    }
+  }
+
+  return true;
+}
