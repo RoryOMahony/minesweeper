@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import "./Cell.css";
 import "../Flex.css";
 
-const Cell = ({ cell, leftClickCallback, rightClickCallBack }) => {
+const Cell = ({ cell, leftClickCallback, rightClickCallBack, doubleClickCallBack }) => {
   const borderStyle = useMemo(() => {
     if (cell.selected) {
       return {
@@ -39,6 +39,12 @@ const Cell = ({ cell, leftClickCallback, rightClickCallBack }) => {
     }
   }
 
+  function handleDoubleClick() {
+    if(cell.selected && !cell.isMine){
+      doubleClickCallBack(cell);
+    }
+  }
+
   function handleRightClick(event) {
     event.preventDefault();
     if (!cell.selected) {
@@ -52,6 +58,7 @@ const Cell = ({ cell, leftClickCallback, rightClickCallBack }) => {
         style={borderStyle}
         className={`cell flex-row flex-main-axis-center noselect ${numberColourClassName}`}
         onClick={handleClick}
+        onDoubleClick={handleDoubleClick}
         onContextMenu={e => handleRightClick(e)}
       >
         {displayValue}

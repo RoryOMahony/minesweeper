@@ -32,6 +32,17 @@ const GameBoard = ({ rows, columns, mines }) => {
     });
   }
 
+  function handleCellDoubleClick(cell) {
+    if (gameState !== GAME_STATE.IN_PROGRESS) {
+      return;
+    }
+
+    gameBoardDispatch({
+      type: BOARD_REDUCER_ACTIONS.UNCOVER_SURROUNDING_CELLS,
+      payload: cell
+    });
+  }
+
   function handleCellRightClick(cell) {
     if (gameState !== GAME_STATE.IN_PROGRESS) {
       return;
@@ -52,6 +63,7 @@ const GameBoard = ({ rows, columns, mines }) => {
               cell={cell}
               leftClickCallback={handleCellSelected}
               rightClickCallBack={handleCellRightClick}
+              doubleClickCallBack={handleCellDoubleClick}
               key={cell.column}
             ></Cell>
           );
