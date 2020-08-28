@@ -32,7 +32,7 @@ const GameBoard = ({ gameBoard, gameBoardDispatch }) => {
           return (
             <Cell
               cell={cell}
-              leftClickCallback={handleCellSelected}
+              cellSelectedCallBack={handleCellSelected}
               rightClickCallBack={handleCellRightClick}
               doubleClickCallBack={handleCellDoubleClick}
               key={cell.column}

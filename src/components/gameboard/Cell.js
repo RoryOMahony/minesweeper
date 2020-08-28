@@ -1,10 +1,17 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import "./Cell.css";
 import "../Flex.css";
 
-const Cell = ({ cell, leftClickCallback, rightClickCallBack, doubleClickCallBack }) => {
+const Cell = ({
+  cell,
+  cellSelectedCallBack,
+  rightClickCallBack,
+  doubleClickCallBack
+}) => {
+  const [selectingCell, setSelectingCell] = useState(false);
+
   const borderStyle = useMemo(() => {
-    if (cell.selected) {
+    if (cell.selected || selectingCell) {
       return {
         borderStyle: "none"
       };
@@ -13,7 +20,7 @@ const Cell = ({ cell, leftClickCallback, rightClickCallBack, doubleClickCallBack
         borderStyle: "outset"
       };
     }
-  }, [cell.selected]);
+  }, [cell.selected, selectingCell]);
 
   const displayValue = useMemo(() => {
     if (!cell.selected) {
@@ -31,25 +38,44 @@ const Cell = ({ cell, leftClickCallback, rightClickCallBack, doubleClickCallBack
     return cell.surroundingMines === 0 ? "" : cell.surroundingMines;
   }, [cell.selected, cell.isMine, cell.surroundingMines, cell.isFlagged]);
 
-  const numberColourClassName = cell.isMine ? "" : `number-${cell.surroundingMines}`;
+  const numberColourClassName =
+    cell.isMine || cell.isFlagged ? "" : `number-${cell.surroundingMines}`;
 
-  function handleClick() {
-    if (!cell.selected && !cell.isFlagged) {
-      leftClickCallback(cell);
-    }
+  function handleRightClick(event) {
+    event.preventDefault();
   }
 
   function handleDoubleClick() {
-    if(cell.selected && !cell.isMine){
+    if (cell.selected && !cell.isMine) {
       doubleClickCallBack(cell);
     }
   }
 
-  function handleRightClick(event) {
-    event.preventDefault();
-    if (!cell.selected) {
+  function handleMouseDown(event) {
+    if (event.buttons === 1) {
+      // Left click
+      setSelectingCell(true);
+    } else if (event.buttons === 2 && !cell.selected) {
+      // Right click
       rightClickCallBack(cell);
     }
+  }
+
+  function handleMouseUp(event) {
+    if (selectingCell && !cell.selected && !cell.isFlagged) {
+      cellSelectedCallBack(cell);
+    }
+  }
+
+  function handleMouseEnter(event) {
+    if (event.buttons === 1 && !cell.isFlagged) {
+      // Left click
+      setSelectingCell(true);
+    }
+  }
+
+  function handleMouseLeave() {
+    setSelectingCell(false);
   }
 
   return (
@@ -57,7 +83,10 @@ const Cell = ({ cell, leftClickCallback, rightClickCallBack, doubleClickCallBack
       <div
         style={borderStyle}
         className={`cell flex-row flex-main-axis-center noselect ${numberColourClassName}`}
-        onClick={handleClick}
+        onMouseDown={e => handleMouseDown(e)}
+        onMouseUp={e => handleMouseUp(e)}
+        onMouseEnter={e => handleMouseEnter(e)}
+        onMouseLeave={handleMouseLeave}
         onDoubleClick={handleDoubleClick}
         onContextMenu={e => handleRightClick(e)}
       >
