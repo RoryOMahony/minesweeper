@@ -1,18 +1,9 @@
-import React, { useReducer } from "react";
+import React from "react";
 import Cell from "./Cell";
-import GameCreator from "../../objects/GameCreator";
 import "../Flex.css";
-import {
-  BoardReducer,
-  BOARD_REDUCER_ACTIONS
-} from "../../reducers/BoardReducer";
+import { BOARD_REDUCER_ACTIONS } from "../../reducers/BoardReducer";
 
-const GameBoard = ({ rows, columns, mines }) => {
-  const [gameBoard, gameBoardDispatch] = useReducer(
-    BoardReducer,
-    new GameCreator().createGame(rows, columns, mines)
-  );
-
+const GameBoard = ({ gameBoard, gameBoardDispatch }) => {
   function handleCellSelected(cell) {
     gameBoardDispatch({
       type: BOARD_REDUCER_ACTIONS.UNCOVER_CELL,

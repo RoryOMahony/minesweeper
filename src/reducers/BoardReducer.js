@@ -2,7 +2,9 @@ import {
   getCell,
   setCell,
   getSurroundingCells,
-  setGameState
+  setGameState,
+  increaseFlagsAvailable,
+  decreaseFlagsAvailable
 } from "../objects/GameBoardObject";
 import { GAME_STATE } from "../objects/GameState";
 import GameCreator from "../objects/GameCreator";
@@ -73,6 +75,12 @@ export const BoardReducer = (state, dispatch) => {
     case BOARD_REDUCER_ACTIONS.TOGGLE_FLAGGED:
       if (isGameOver(updatedState)) {
         return updatedState;
+      }
+
+      if(dispatch.payload.isFlagged){
+        increaseFlagsAvailable(updatedState);
+      }else{
+        decreaseFlagsAvailable(updatedState);
       }
 
       toggleFlagged(dispatch.payload, updatedState);

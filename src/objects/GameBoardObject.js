@@ -15,6 +15,14 @@ export function setGameState(gameBoard, gameState) {
   gameBoard.gameState = gameState;
 }
 
+export function decreaseFlagsAvailable(gameBoard){
+  gameBoard.flagsAvailable -= 1;
+}
+
+export function increaseFlagsAvailable(gameBoard){
+  gameBoard.flagsAvailable += 1;
+}
+
 export function getRowCount(gameBoard) {
   return gameBoard.board.length;
 }
