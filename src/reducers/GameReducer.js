@@ -5,7 +5,7 @@ import {
   setGameState,
   increaseFlagsAvailable,
   decreaseFlagsAvailable
-} from "../objects/GameBoardObject";
+} from "../objects/GameObject";
 import { GAME_STATE } from "../objects/GameState";
 import GameCreator from "../objects/GameCreator";
 
@@ -15,7 +15,7 @@ export const BOARD_REDUCER_ACTIONS = {
   UNCOVER_SURROUNDING_CELLS: "UNCOVER_SURROUNDING_CELLS"
 };
 
-export const BoardReducer = (state, dispatch) => {
+export const GameReducer = (state, dispatch) => {
   const updatedState = { ...state };
 
   switch (dispatch.type) {

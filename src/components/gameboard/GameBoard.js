@@ -1,7 +1,7 @@
 import React from "react";
 import Cell from "./Cell";
 import "../Flex.css";
-import { BOARD_REDUCER_ACTIONS } from "../../reducers/BoardReducer";
+import { BOARD_REDUCER_ACTIONS } from "../../reducers/GameReducer";
 
 const GameBoard = ({ gameBoard, gameBoardDispatch }) => {
   function handleCellSelected(cell) {

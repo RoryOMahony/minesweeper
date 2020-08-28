@@ -1,10 +1,10 @@
 import CellObject from "./CellObject";
-import GameBoardObject, {
+import GameObject, {
   getRowCount,
   getColumnCount,
   getCell,
   getSurroundingCells
-} from "./GameBoardObject";
+} from "./GameObject";
 
 export default class GameCreator {
   createGame(rows, columns, mines) {
@@ -28,7 +28,7 @@ function createBlankGameBoard(rows, columns) {
     rowMap.push(row);
   }
 
-  return new GameBoardObject(rowMap);
+  return new GameObject(rowMap);
 }
 
 function createRow(row, numOfColumns) {

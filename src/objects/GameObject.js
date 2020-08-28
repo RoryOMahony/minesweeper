@@ -1,6 +1,6 @@
 import { GAME_STATE } from "./GameState";
 
-export default class GameBoardObject {
+export default class GameObject {
   gameState = GAME_STATE.NOT_STARTED;
   numOfMines = 0;
   flagsAvailable = 0;

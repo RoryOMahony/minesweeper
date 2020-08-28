@@ -4,11 +4,11 @@ import GameCreator from "../objects/GameCreator";
 import "./Minesweeper.css";
 import NumberDisplay from "./gameinfo/NumberDisplay";
 
-import { BoardReducer } from "../reducers/BoardReducer";
+import { GameReducer } from "../reducers/GameReducer";
 
 export const Minesweeper = () => {
   const [gameBoard, gameBoardDispatch] = useReducer(
-    BoardReducer,
+    GameReducer,
     new GameCreator().createGame(10, 10, 10)
   );
 
