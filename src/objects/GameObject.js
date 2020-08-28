@@ -4,6 +4,7 @@ export default class GameObject {
   gameState = GAME_STATE.NOT_STARTED;
   numOfMines = 0;
   flagsAvailable = 0;
+  score = 0;
 
   constructor(board) {
     this.board = board;
@@ -11,8 +12,11 @@ export default class GameObject {
 }
 
 export function setGameState(gameBoard, gameState) {
-  console.log("Setting game state:", gameState);
   gameBoard.gameState = gameState;
+}
+
+export function setScore(gameBoard, score){
+  gameBoard.score = score;
 }
 
 export function decreaseFlagsAvailable(gameBoard){
