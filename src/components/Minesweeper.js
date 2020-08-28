@@ -2,9 +2,8 @@ import React, { useReducer } from "react";
 import GameBoard from "./gameboard/GameBoard";
 import GameCreator from "../objects/GameCreator";
 import "./Minesweeper.css";
-import NumberDisplay from "./gameinfo/NumberDisplay";
-
 import { GameReducer } from "../reducers/GameReducer";
+import GameInfo from "./gameinfo/GameInfo";
 
 export const Minesweeper = () => {
   const [gameBoard, gameBoardDispatch] = useReducer(
@@ -14,7 +13,7 @@ export const Minesweeper = () => {
 
   return (
     <div id="game">
-      <NumberDisplay number={gameBoard.flagsAvailable}></NumberDisplay>
+      <GameInfo game={gameBoard}></GameInfo>
       <GameBoard
         gameBoard={gameBoard}
         gameBoardDispatch={gameBoardDispatch}
