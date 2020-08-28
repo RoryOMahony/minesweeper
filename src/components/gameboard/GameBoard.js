@@ -6,7 +6,6 @@ import {
   BoardReducer,
   BOARD_REDUCER_ACTIONS
 } from "../../reducers/BoardReducer";
-import { GAME_STATE } from "../../objects/GameState";
 
 const GameBoard = ({ rows, columns, mines }) => {
   const [gameBoard, gameBoardDispatch] = useReducer(
@@ -15,10 +14,6 @@ const GameBoard = ({ rows, columns, mines }) => {
   );
 
   function handleCellSelected(cell) {
-    if (gameBoard.gameState !== GAME_STATE.IN_PROGRESS) {
-      return;
-    }
-
     gameBoardDispatch({
       type: BOARD_REDUCER_ACTIONS.UNCOVER_CELL,
       payload: cell
@@ -26,10 +21,6 @@ const GameBoard = ({ rows, columns, mines }) => {
   }
 
   function handleCellDoubleClick(cell) {
-    if (gameBoard.gameState !== GAME_STATE.IN_PROGRESS) {
-      return;
-    }
-
     gameBoardDispatch({
       type: BOARD_REDUCER_ACTIONS.UNCOVER_SURROUNDING_CELLS,
       payload: cell
@@ -37,10 +28,6 @@ const GameBoard = ({ rows, columns, mines }) => {
   }
 
   function handleCellRightClick(cell) {
-    if (gameBoard.gameState !== GAME_STATE.IN_PROGRESS) {
-      return;
-    }
-
     gameBoardDispatch({
       type: BOARD_REDUCER_ACTIONS.TOGGLE_FLAGGED,
       payload: cell

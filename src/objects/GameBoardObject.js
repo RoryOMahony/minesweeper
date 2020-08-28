@@ -1,7 +1,9 @@
 import { GAME_STATE } from "./GameState";
 
 export default class GameBoardObject {
-  gameState = GAME_STATE.IN_PROGRESS;
+  gameState = GAME_STATE.NOT_STARTED;
+  numOfMines = 0;
+  flagsAvailable = 0;
 
   constructor(board) {
     this.board = board;
@@ -9,6 +11,7 @@ export default class GameBoardObject {
 }
 
 export function setGameState(gameBoard, gameState) {
+  console.log("Setting game state:", gameState);
   gameBoard.gameState = gameState;
 }
 

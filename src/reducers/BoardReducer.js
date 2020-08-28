@@ -5,6 +5,7 @@ import {
   setGameState
 } from "../objects/GameBoardObject";
 import { GAME_STATE } from "../objects/GameState";
+import GameCreator from "../objects/GameCreator";
 
 export const BOARD_REDUCER_ACTIONS = {
   UNCOVER_CELL: "UNCOVER_CELL",
@@ -17,6 +18,15 @@ export const BoardReducer = (state, dispatch) => {
 
   switch (dispatch.type) {
     case BOARD_REDUCER_ACTIONS.UNCOVER_CELL:
+      if (isGameOver(updatedState)) {
+        return updatedState;
+      }
+
+      if (updatedState.gameState === GAME_STATE.NOT_STARTED) {
+        populateMinesOnBoard(updatedState, dispatch.payload)
+        setGameState(updatedState, GAME_STATE.IN_PROGRESS);
+      }
+
       const updatedCell = setCellUncovered(dispatch.payload, updatedState);
 
       if (updatedCell.isMine) {
@@ -37,6 +47,10 @@ export const BoardReducer = (state, dispatch) => {
       return updatedState;
 
     case BOARD_REDUCER_ACTIONS.UNCOVER_SURROUNDING_CELLS:
+      if (isGameOver(updatedState)) {
+        return updatedState;
+      }
+
       const { row, column } = dispatch.payload;
       const surroundingCells = getSurroundingCells(updatedState, row, column);
       const flaggedSurroundingCells = surroundingCells.filter(
@@ -57,6 +71,10 @@ export const BoardReducer = (state, dispatch) => {
       return updatedState;
 
     case BOARD_REDUCER_ACTIONS.TOGGLE_FLAGGED:
+      if (isGameOver(updatedState)) {
+        return updatedState;
+      }
+
       toggleFlagged(dispatch.payload, updatedState);
       return updatedState;
 
@@ -140,4 +158,15 @@ function uncoverSurroundingCells(cell, gameBoard) {
   });
 
   return uncoveredCells;
+}
+
+function isGameOver(gameBoard) {
+  return (
+    gameBoard.gameState === GAME_STATE.LOST ||
+    gameBoard.gameState === GAME_STATE.WON
+  );
+}
+
+function populateMinesOnBoard(gameBoard, offLimitCell) {
+  new GameCreator().initialiseGame(gameBoard, gameBoard.numOfMines, offLimitCell);
 }

@@ -9,9 +9,14 @@ import GameBoardObject, {
 export default class GameCreator {
   createGame(rows, columns, mines) {
     const gameBoard = createBlankGameBoard(rows, columns);
-    populateMines(gameBoard, mines);
-    populateSurroundingMines(gameBoard);
+    gameBoard.numOfMines = mines;
+    gameBoard.flagsAvailable = mines;
     return gameBoard;
+  }
+
+  initialiseGame(gameBoard, numOfMines, offLimitCell) {
+    populateMines(gameBoard, numOfMines, offLimitCell);
+    populateSurroundingMines(gameBoard);
   }
 }
 
@@ -34,7 +39,7 @@ function createRow(row, numOfColumns) {
   return columnMap;
 }
 
-function populateMines(gameBoard, mines) {
+function populateMines(gameBoard, mines, offLimitCell) {
   const maxRowNumber = getRowCount(gameBoard);
   const maxColumnNumber = getColumnCount(gameBoard);
   for (let i = 0; i < mines; i++) {
@@ -42,6 +47,9 @@ function populateMines(gameBoard, mines) {
     while (!minePlaced) {
       const row = generateRandomNumber(maxRowNumber);
       const column = generateRandomNumber(maxColumnNumber);
+      if (row === offLimitCell.row && column === offLimitCell.column) {
+        continue;
+      }
       const cell = getCell(gameBoard, row, column);
       if (!cell.isMine) {
         cell.isMine = true;
