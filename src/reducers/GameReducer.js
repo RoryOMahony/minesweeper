@@ -4,15 +4,17 @@ import {
   getSurroundingCells,
   setGameState,
   increaseFlagsAvailable,
-  decreaseFlagsAvailable
+  decreaseFlagsAvailable,
+  setScore
 } from "../objects/GameObject";
 import { GAME_STATE } from "../objects/GameState";
 import GameCreator from "../objects/GameCreator";
 
 export const BOARD_REDUCER_ACTIONS = {
   UNCOVER_CELL: "UNCOVER_CELL",
+  UNCOVER_SURROUNDING_CELLS: "UNCOVER_SURROUNDING_CELLS",
   TOGGLE_FLAGGED: "TOGGLE_FLAGGED",
-  UNCOVER_SURROUNDING_CELLS: "UNCOVER_SURROUNDING_CELLS"
+  INCREASE_SCORE: "INCREASE_SCORE"
 };
 
 export const GameReducer = (state, dispatch) => {
@@ -25,7 +27,7 @@ export const GameReducer = (state, dispatch) => {
       }
 
       if (updatedState.gameState === GAME_STATE.NOT_STARTED) {
-        populateMinesOnBoard(updatedState, dispatch.payload)
+        populateMinesOnBoard(updatedState, dispatch.payload);
         setGameState(updatedState, GAME_STATE.IN_PROGRESS);
       }
 
@@ -77,13 +79,17 @@ export const GameReducer = (state, dispatch) => {
         return updatedState;
       }
 
-      if(dispatch.payload.isFlagged){
+      if (dispatch.payload.isFlagged) {
         increaseFlagsAvailable(updatedState);
-      }else{
+      } else {
         decreaseFlagsAvailable(updatedState);
       }
 
       toggleFlagged(dispatch.payload, updatedState);
+      return updatedState;
+
+    case BOARD_REDUCER_ACTIONS.INCREASE_SCORE:
+      setScore(updatedState, updatedState.score + 1);
       return updatedState;
 
     default:
@@ -176,5 +182,9 @@ function isGameOver(gameBoard) {
 }
 
 function populateMinesOnBoard(gameBoard, offLimitCell) {
-  new GameCreator().initialiseGame(gameBoard, gameBoard.numOfMines, offLimitCell);
+  new GameCreator().initialiseGame(
+    gameBoard,
+    gameBoard.numOfMines,
+    offLimitCell
+  );
 }
