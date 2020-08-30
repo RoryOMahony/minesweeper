@@ -5,6 +5,7 @@ import "./Minesweeper.css";
 import { GameReducer, BOARD_REDUCER_ACTIONS } from "../reducers/GameReducer";
 import GameInfo from "./gameinfo/GameInfo";
 import { GAME_STATE } from "../objects/GameState";
+import { DifficultyContainer } from "./difficulty/DifficultyContainer";
 
 export const Minesweeper = () => {
   const [game, gameDispatch] = useReducer(
@@ -30,7 +31,8 @@ export const Minesweeper = () => {
 
   return (
     <div id="game">
-      <GameInfo game={game}></GameInfo>
+      <DifficultyContainer gameDispatch={gameDispatch}></DifficultyContainer>
+      <GameInfo game={game} gameDispatch={gameDispatch}></GameInfo>
       <GameBoard gameBoard={game} gameBoardDispatch={gameDispatch}></GameBoard>
     </div>
   );
