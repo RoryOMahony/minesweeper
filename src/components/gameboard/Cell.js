@@ -57,6 +57,7 @@ const Cell = ({
     cell.isMine || cell.isFlagged ? "" : `number-${cell.surroundingMines}`;
 
   function handleRightClick(event) {
+    console.log("preventing right click");
     event.preventDefault();
   }
 
@@ -101,7 +102,7 @@ const Cell = ({
   }
 
   return (
-    <div className="cell-container">
+    <div className="cell-container" onContextMenu={e => handleRightClick(e)}>
       <div
         style={borderStyle}
         className={`cell flex-row flex-main-axis-center flex-cross-axis-center noselect ${numberColourClassName}`}
@@ -110,7 +111,6 @@ const Cell = ({
         onMouseEnter={e => handleMouseEnter(e)}
         onMouseLeave={handleMouseLeave}
         onDoubleClick={handleDoubleClick}
-        onContextMenu={e => handleRightClick(e)}
       >
         {displayValue}
       </div>
