@@ -57,7 +57,6 @@ const Cell = ({
     cell.isMine || cell.isFlagged ? "" : `number-${cell.surroundingMines}`;
 
   function handleRightClick(event) {
-    console.log("preventing right click");
     event.preventDefault();
   }
 
