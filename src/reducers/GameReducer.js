@@ -5,7 +5,9 @@ import {
   setGameState,
   increaseFlagsAvailable,
   decreaseFlagsAvailable,
-  setScore
+  setScore,
+  getRowCount,
+  getColumnCount
 } from "../objects/GameObject";
 import { GAME_STATE } from "../objects/GameState";
 import GameCreator from "../objects/GameCreator";
@@ -14,7 +16,9 @@ export const BOARD_REDUCER_ACTIONS = {
   UNCOVER_CELL: "UNCOVER_CELL",
   UNCOVER_SURROUNDING_CELLS: "UNCOVER_SURROUNDING_CELLS",
   TOGGLE_FLAGGED: "TOGGLE_FLAGGED",
-  INCREASE_SCORE: "INCREASE_SCORE"
+  INCREASE_SCORE: "INCREASE_SCORE",
+  RESET_GAME: "RESET_GAME",
+  CHANGE_DIFFICULTY: "CHANGE_DIFFICULTY"
 };
 
 export const GameReducer = (state, dispatch) => {
@@ -34,19 +38,20 @@ export const GameReducer = (state, dispatch) => {
       const updatedCell = setCellUncovered(dispatch.payload, updatedState);
 
       if (updatedCell.isMine) {
+        updatedCell.selected = true;
         setGameState(updatedState, GAME_STATE.LOST);
-        return updatedState;
-      }
-
-      if (updatedCell.surroundingMines === 0) {
+      } else if (updatedCell.surroundingMines === 0) {
         const uncoveredCells = recursivelyUncoverAllSurroundingCells(
           updatedCell,
           updatedState
         );
         uncoveredCells.forEach(cell => setCellUncovered(cell, updatedState));
+        setGameState(updatedState, calculateGameState(updatedState));
       }
 
-      setGameState(updatedState, calculateGameState(updatedState));
+      if (updatedState.gameState === GAME_STATE.LOST) {
+        uncoverAllMines(updatedState);
+      }
 
       return updatedState;
 
@@ -69,9 +74,17 @@ export const GameReducer = (state, dispatch) => {
           updatedState
         );
         uncoveredCells.forEach(cell => setCellUncovered(cell, updatedState));
+        uncoveredCells
+          .filter(cell => cell.isMine)
+          .forEach(cell => (cell.selected = true));
 
         setGameState(updatedState, calculateGameState(updatedState));
       }
+
+      if (updatedState.gameState === GAME_STATE.LOST) {
+        uncoverAllMines(updatedState);
+      }
+
       return updatedState;
 
     case BOARD_REDUCER_ACTIONS.TOGGLE_FLAGGED:
@@ -92,6 +105,24 @@ export const GameReducer = (state, dispatch) => {
       setScore(updatedState, updatedState.score + 1);
       return updatedState;
 
+    case BOARD_REDUCER_ACTIONS.RESET_GAME:
+      let rows = getRowCount(updatedState);
+      let columns = getColumnCount(updatedState);
+      console.log(rows, columns, updatedState);
+      return new GameCreator().createGame(
+        rows,
+        columns,
+        updatedState.numOfMines
+      );
+
+    case BOARD_REDUCER_ACTIONS.CHANGE_DIFFICULTY:
+      const gameDifficultyInfo = dispatch.payload;
+      return new GameCreator().createGame(
+        gameDifficultyInfo.rows,
+        gameDifficultyInfo.columns,
+        gameDifficultyInfo.mines
+      );
+
     default:
       return state;
   }
@@ -106,7 +137,7 @@ function toggleFlagged(cell, state) {
 function setCellUncovered(cell, gameBoard) {
   const { row, column } = cell;
   const currentCell = getCell(gameBoard, row, column);
-  const updatedCell = { ...currentCell, selected: true };
+  const updatedCell = { ...currentCell, display: true };
   setCell(gameBoard, row, column, updatedCell);
   return updatedCell;
 }
@@ -117,7 +148,7 @@ function calculateGameState(gameBoard) {
   for (let row of gameBoard.board) {
     const mineSelectedInRow = row
       .filter(cell => cell.isMine)
-      .some(cell => cell.selected);
+      .some(cell => cell.display);
 
     if (mineSelectedInRow) {
       return GAME_STATE.LOST;
@@ -125,7 +156,7 @@ function calculateGameState(gameBoard) {
 
     const selectedAllNonMinesInRow = row
       .filter(cell => !cell.isMine)
-      .every(cell => cell.selected);
+      .every(cell => cell.display);
     if (!selectedAllNonMinesInRow) {
       uncoveredAllNoneMines = false;
     }
@@ -163,11 +194,11 @@ function uncoverSurroundingCells(cell, gameBoard) {
     cell.column
   );
   const surroundingCellsToUncover = surroundingCells.filter(
-    cell => !cell.isFlagged && !cell.selected
+    cell => !cell.isFlagged && !cell.display
   );
 
   surroundingCellsToUncover.forEach(cell => {
-    cell.selected = true;
+    cell.display = true;
     uncoveredCells.push(cell);
   });
 
@@ -187,4 +218,10 @@ function populateMinesOnBoard(gameBoard, offLimitCell) {
     gameBoard.numOfMines,
     offLimitCell
   );
+}
+
+function uncoverAllMines(game) {
+  for (let row of game.board) {
+    row.filter(cell => cell.isMine).forEach(cell => (cell.display = true));
+  }
 }
