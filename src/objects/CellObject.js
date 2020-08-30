@@ -2,6 +2,7 @@ export default class CellObject {
   row;
   column;
   selected = false;
+  display = false;
   isMine = false;
   isFlagged = false;
   surroundingMines;

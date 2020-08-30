@@ -1,9 +1,11 @@
 import React, { useMemo, useState } from "react";
 import "./Cell.css";
 import "../Flex.css";
+import { GAME_STATE } from "../../objects/GameState";
 
 const Cell = ({
   cell,
+  gameState,
   cellSelectedCallBack,
   rightClickCallBack,
   doubleClickCallBack
@@ -11,32 +13,45 @@ const Cell = ({
   const [selectingCell, setSelectingCell] = useState(false);
 
   const borderStyle = useMemo(() => {
-    if (cell.selected || selectingCell) {
+    if (!cell.display && selectingCell) {
       return {
         borderStyle: "none"
       };
-    } else {
+    }
+
+    if (cell.display) {
+      if (!cell.isMine || !cell.selected) {
+        return {
+          borderStyle: "none"
+        };
+      }
+
       return {
-        borderStyle: "outset"
+        borderStyle: "none",
+        backgroundColor: "red"
       };
     }
-  }, [cell.selected, selectingCell]);
+
+    return {
+      borderStyle: "outset"
+    };
+  }, [cell.display, selectingCell, cell.isMine, cell.selected]);
 
   const displayValue = useMemo(() => {
-    if (!cell.selected) {
+    if (!cell.display) {
       if (cell.isFlagged) {
-        return "F";
+        return <i className="fa fa-flag cell-icon" aria-hidden="true"></i>;
       } else {
         return "";
       }
     }
 
     if (cell.isMine) {
-      return "M";
+      return <i className="fa fa-bomb cell-icon" aria-hidden="true"></i>;
     }
 
     return cell.surroundingMines === 0 ? "" : cell.surroundingMines;
-  }, [cell.selected, cell.isMine, cell.surroundingMines, cell.isFlagged]);
+  }, [cell.display, cell.isMine, cell.surroundingMines, cell.isFlagged]);
 
   const numberColourClassName =
     cell.isMine || cell.isFlagged ? "" : `number-${cell.surroundingMines}`;
@@ -46,28 +61,35 @@ const Cell = ({
   }
 
   function handleDoubleClick() {
-    if (cell.selected && !cell.isMine) {
+    if (cell.display && !cell.isMine) {
       doubleClickCallBack(cell);
     }
   }
 
   function handleMouseDown(event) {
-    if (event.buttons === 1) {
+    if (gameState === GAME_STATE.LOST || gameState === GAME_STATE.WON) {
+      return;
+    }
+
+    if (event.buttons === 1 && !cell.isFlagged) {
       // Left click
       setSelectingCell(true);
-    } else if (event.buttons === 2 && !cell.selected) {
+    } else if (event.buttons === 2 && !cell.display) {
       // Right click
       rightClickCallBack(cell);
     }
   }
 
   function handleMouseUp(event) {
-    if (selectingCell && !cell.selected && !cell.isFlagged) {
+    if (selectingCell && !cell.display && !cell.isFlagged) {
       cellSelectedCallBack(cell);
     }
   }
 
   function handleMouseEnter(event) {
+    if (gameState === GAME_STATE.LOST || gameState === GAME_STATE.WON) {
+      return;
+    }
     if (event.buttons === 1 && !cell.isFlagged) {
       // Left click
       setSelectingCell(true);
@@ -82,7 +104,7 @@ const Cell = ({
     <div className="cell-container">
       <div
         style={borderStyle}
-        className={`cell flex-row flex-main-axis-center noselect ${numberColourClassName}`}
+        className={`cell flex-row flex-main-axis-center flex-cross-axis-center noselect ${numberColourClassName}`}
         onMouseDown={e => handleMouseDown(e)}
         onMouseUp={e => handleMouseUp(e)}
         onMouseEnter={e => handleMouseEnter(e)}
