@@ -1,18 +1,17 @@
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import "./Cell.css";
 import "../Flex.css";
-import { GAME_STATE } from "../../objects/GameState";
 
 const Cell = ({
   cell,
-  gameState,
+  gameOver,
   cellSelectedCallBack,
   rightClickCallBack,
   doubleClickCallBack
 }) => {
   const [selectingCell, setSelectingCell] = useState(false);
 
-  const borderStyle = useMemo(() => {
+  const calculateBorderStyle = () => {
     if (!cell.display && selectingCell) {
       return {
         borderStyle: "none"
@@ -35,9 +34,9 @@ const Cell = ({
     return {
       borderStyle: "outset"
     };
-  }, [cell.display, selectingCell, cell.isMine, cell.selected]);
+  };
 
-  const displayValue = useMemo(() => {
+  const calculateDisplayValue = () => {
     if (!cell.display) {
       if (cell.isFlagged) {
         return <i className="fa fa-flag cell-icon" aria-hidden="true"></i>;
@@ -51,7 +50,10 @@ const Cell = ({
     }
 
     return cell.surroundingMines === 0 ? "" : cell.surroundingMines;
-  }, [cell.display, cell.isMine, cell.surroundingMines, cell.isFlagged]);
+  };
+
+  const borderStyle = calculateBorderStyle();
+  const displayValue = calculateDisplayValue();
 
   const numberColourClassName =
     cell.isMine || cell.isFlagged ? "" : `number-${cell.surroundingMines}`;
@@ -61,13 +63,13 @@ const Cell = ({
   }
 
   function handleDoubleClick() {
-    if (cell.display && !cell.isMine) {
+    if (!gameOver && cell.display && !cell.isMine) {
       doubleClickCallBack(cell);
     }
   }
 
   function handleMouseDown(event) {
-    if (gameState === GAME_STATE.LOST || gameState === GAME_STATE.WON) {
+    if (gameOver) {
       return;
     }
 
@@ -80,14 +82,14 @@ const Cell = ({
     }
   }
 
-  function handleMouseUp(event) {
+  function handleMouseUp() {
     if (selectingCell && !cell.display && !cell.isFlagged) {
       cellSelectedCallBack(cell);
     }
   }
 
   function handleMouseEnter(event) {
-    if (gameState === GAME_STATE.LOST || gameState === GAME_STATE.WON) {
+    if (gameOver) {
       return;
     }
     if (event.buttons === 1 && !cell.isFlagged) {
@@ -106,7 +108,7 @@ const Cell = ({
         style={borderStyle}
         className={`cell flex-row flex-main-axis-center flex-cross-axis-center noselect ${numberColourClassName}`}
         onMouseDown={e => handleMouseDown(e)}
-        onMouseUp={e => handleMouseUp(e)}
+        onMouseUp={handleMouseUp}
         onMouseEnter={e => handleMouseEnter(e)}
         onMouseLeave={handleMouseLeave}
         onDoubleClick={handleDoubleClick}
