@@ -18,7 +18,7 @@ const GameBoard = ({ gameState, gameBoard, numOfMines, gameBoardDispatch }) => {
       }
 
       gameBoardDispatch({
-        type: BOARD_REDUCER_ACTIONS.UNCOVER_CELL,
+        type: BOARD_REDUCER_ACTIONS.DISPLAY_CELL,
         payload: cell
       });
     },
@@ -28,7 +28,7 @@ const GameBoard = ({ gameState, gameBoard, numOfMines, gameBoardDispatch }) => {
   const handleCellDoubleClick = useCallback(
     cell => {
       gameBoardDispatch({
-        type: BOARD_REDUCER_ACTIONS.UNCOVER_SURROUNDING_CELLS,
+        type: BOARD_REDUCER_ACTIONS.DISPLAY_SURROUNDING_CELLS,
         payload: cell
       });
     },

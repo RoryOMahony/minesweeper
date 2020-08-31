@@ -10,11 +10,16 @@ import {
   getColumnCount
 } from "../objects/GameObject";
 import { GAME_STATE } from "../objects/GameState";
-import GameCreator from "../objects/GameCreator";
+import {
+  populateSurroundingMines,
+  createGameFromDifficulty,
+  createGame
+} from "../objects/GameCreator";
 
 export const BOARD_REDUCER_ACTIONS = {
-  UNCOVER_CELL: "UNCOVER_CELL",
-  UNCOVER_SURROUNDING_CELLS: "UNCOVER_SURROUNDING_CELLS",
+  INITIALISE_GAME: "INITIALISE_GAME",
+  DISPLAY_CELL: "DISPLAY_CELL",
+  DISPLAY_SURROUNDING_CELLS: "DISPLAY_SURROUNDING_CELLS",
   TOGGLE_FLAGGED: "TOGGLE_FLAGGED",
   INCREASE_SCORE: "INCREASE_SCORE",
   RESET_GAME: "RESET_GAME",
@@ -25,43 +30,49 @@ export const GameReducer = (state, dispatch) => {
   const updatedState = { ...state };
 
   switch (dispatch.type) {
-    case BOARD_REDUCER_ACTIONS.UNCOVER_CELL:
+    case BOARD_REDUCER_ACTIONS.INITIALISE_GAME:
+      for (let mineToPlace of dispatch.payload) {
+        setCellAsMine(mineToPlace, updatedState.board);
+      }
+      populateSurroundingMines(updatedState.board);
+      setGameState(updatedState, GAME_STATE.IN_PROGRESS);
+      return updatedState;
+
+    case BOARD_REDUCER_ACTIONS.DISPLAY_CELL:
       if (isGameOver(updatedState)) {
         return updatedState;
       }
 
-      if (updatedState.gameState === GAME_STATE.NOT_STARTED) {
-        populateMinesOnBoard(updatedState, dispatch.payload);
-        setGameState(updatedState, GAME_STATE.IN_PROGRESS);
-      }
-
-      const updatedCell = setCellUncovered(dispatch.payload, updatedState);
+      const updatedCell = displayCell(dispatch.payload, updatedState.board);
+      updatedCell.selected = true;
 
       if (updatedCell.isMine) {
-        updatedCell.selected = true;
         setGameState(updatedState, GAME_STATE.LOST);
-      } else if (updatedCell.surroundingMines === 0) {
-        const uncoveredCells = recursivelyUncoverAllSurroundingCells(
-          updatedCell,
-          updatedState
-        );
-        uncoveredCells.forEach(cell => setCellUncovered(cell, updatedState));
+        displayAllMines(updatedState);
+      } else {
+        if (updatedCell.surroundingMines === 0) {
+          const uncoveredCells = displayAllValidCells(
+            updatedCell,
+            updatedState.board
+          );
+          uncoveredCells.forEach(cell => displayCell(cell, updatedState.board));
+        }
         setGameState(updatedState, calculateGameState(updatedState));
-      }
-
-      if (updatedState.gameState === GAME_STATE.LOST) {
-        uncoverAllMines(updatedState);
       }
 
       return updatedState;
 
-    case BOARD_REDUCER_ACTIONS.UNCOVER_SURROUNDING_CELLS:
+    case BOARD_REDUCER_ACTIONS.DISPLAY_SURROUNDING_CELLS:
       if (isGameOver(updatedState)) {
         return updatedState;
       }
 
       const { row, column } = dispatch.payload;
-      const surroundingCells = getSurroundingCells(updatedState, row, column);
+      const surroundingCells = getSurroundingCells(
+        updatedState.board,
+        row,
+        column
+      );
       const flaggedSurroundingCells = surroundingCells.filter(
         cell => cell.isFlagged
       );
@@ -69,11 +80,11 @@ export const GameReducer = (state, dispatch) => {
       if (
         flaggedSurroundingCells.length === dispatch.payload.surroundingMines
       ) {
-        const uncoveredCells = recursivelyUncoverAllSurroundingCells(
+        const uncoveredCells = displayAllValidCells(
           dispatch.payload,
-          updatedState
+          updatedState.board
         );
-        uncoveredCells.forEach(cell => setCellUncovered(cell, updatedState));
+        uncoveredCells.forEach(cell => displayCell(cell, updatedState.board));
         uncoveredCells
           .filter(cell => cell.isMine)
           .forEach(cell => (cell.selected = true));
@@ -82,7 +93,7 @@ export const GameReducer = (state, dispatch) => {
       }
 
       if (updatedState.gameState === GAME_STATE.LOST) {
-        uncoverAllMines(updatedState);
+        displayAllMines(updatedState);
       }
 
       return updatedState;
@@ -98,7 +109,7 @@ export const GameReducer = (state, dispatch) => {
         decreaseFlagsAvailable(updatedState);
       }
 
-      toggleFlagged(dispatch.payload, updatedState);
+      toggleFlagged(dispatch.payload, updatedState.board);
       return updatedState;
 
     case BOARD_REDUCER_ACTIONS.INCREASE_SCORE:
@@ -106,103 +117,36 @@ export const GameReducer = (state, dispatch) => {
       return updatedState;
 
     case BOARD_REDUCER_ACTIONS.RESET_GAME:
-      let rows = getRowCount(updatedState);
-      let columns = getColumnCount(updatedState);
-      console.log(rows, columns, updatedState);
-      return new GameCreator().createGame(
-        rows,
-        columns,
-        updatedState.numOfMines
-      );
+      let rows = getRowCount(updatedState.board);
+      let columns = getColumnCount(updatedState.board);
+      return createGame(rows, columns, updatedState.numOfMines);
 
     case BOARD_REDUCER_ACTIONS.CHANGE_DIFFICULTY:
-      const gameDifficultyInfo = dispatch.payload;
-      return new GameCreator().createGame(
-        gameDifficultyInfo.rows,
-        gameDifficultyInfo.columns,
-        gameDifficultyInfo.mines
-      );
+      return createGameFromDifficulty(dispatch.payload);
 
     default:
       return state;
   }
 };
 
-function toggleFlagged(cell, state) {
+function toggleFlagged(cell, board) {
   const { row, column } = cell;
   const updatedCell = { ...cell, isFlagged: !cell.isFlagged };
-  setCell(state, row, column, updatedCell);
+  setCell(board, row, column, updatedCell);
 }
 
-function setCellUncovered(cell, gameBoard) {
-  const { row, column } = cell;
-  const currentCell = getCell(gameBoard, row, column);
+function displayCell(cell, board) {
+  const currentCell = getCell(board, cell.row, cell.column);
   const updatedCell = { ...currentCell, display: true };
-  setCell(gameBoard, row, column, updatedCell);
+  setCell(board, updatedCell.row, updatedCell.column, updatedCell);
   return updatedCell;
 }
 
-function calculateGameState(gameBoard) {
-  let uncoveredAllNoneMines = true;
-
-  for (let row of gameBoard.board) {
-    const mineSelectedInRow = row
-      .filter(cell => cell.isMine)
-      .some(cell => cell.display);
-
-    if (mineSelectedInRow) {
-      return GAME_STATE.LOST;
-    }
-
-    const selectedAllNonMinesInRow = row
-      .filter(cell => !cell.isMine)
-      .every(cell => cell.display);
-    if (!selectedAllNonMinesInRow) {
-      uncoveredAllNoneMines = false;
-    }
-  }
-  if (uncoveredAllNoneMines) {
-    return GAME_STATE.WON;
-  }
-  return GAME_STATE.IN_PROGRESS;
-}
-
-function recursivelyUncoverAllSurroundingCells(
-  cell,
-  gameBoard,
-  allUncoveredCells = []
-) {
-  const uncoveredCells = uncoverSurroundingCells(cell, gameBoard);
-
-  uncoveredCells.forEach(cell => {
-    allUncoveredCells.push(cell);
-
-    if (!cell.isMine && cell.surroundingMines === 0) {
-      recursivelyUncoverAllSurroundingCells(cell, gameBoard, allUncoveredCells);
-    }
-  });
-
-  return allUncoveredCells;
-}
-
-function uncoverSurroundingCells(cell, gameBoard) {
-  let uncoveredCells = [];
-
-  const surroundingCells = getSurroundingCells(
-    gameBoard,
-    cell.row,
-    cell.column
-  );
-  const surroundingCellsToUncover = surroundingCells.filter(
-    cell => !cell.isFlagged && !cell.display
-  );
-
-  surroundingCellsToUncover.forEach(cell => {
-    cell.display = true;
-    uncoveredCells.push(cell);
-  });
-
-  return uncoveredCells;
+function setCellAsMine(cell, board) {
+  const currentCell = getCell(board, cell.row, cell.column);
+  const updatedCell = { ...currentCell, isMine: true };
+  setCell(board, updatedCell.row, updatedCell.column, updatedCell);
+  return updatedCell;
 }
 
 function isGameOver(gameBoard) {
@@ -212,16 +156,72 @@ function isGameOver(gameBoard) {
   );
 }
 
-function populateMinesOnBoard(gameBoard, offLimitCell) {
-  new GameCreator().initialiseGame(
-    gameBoard,
-    gameBoard.numOfMines,
-    offLimitCell
-  );
-}
-
-function uncoverAllMines(game) {
+function displayAllMines(game) {
   for (let row of game.board) {
     row.filter(cell => cell.isMine).forEach(cell => (cell.display = true));
   }
+}
+
+function calculateGameState(gameBoard) {
+  let allNonMineCellsDisplayed = true;
+
+  for (let row of gameBoard.board) {
+    const mineInRowDisplayed = row
+      .filter(cell => cell.isMine)
+      .some(cell => cell.display);
+
+    if (mineInRowDisplayed) {
+      return GAME_STATE.LOST;
+    }
+
+    const allNonMineCellsInRowDisplayed = row
+      .filter(cell => !cell.isMine)
+      .every(cell => cell.display);
+    if (!allNonMineCellsInRowDisplayed) {
+      allNonMineCellsDisplayed = false;
+    }
+  }
+
+  return allNonMineCellsDisplayed ? GAME_STATE.WON : GAME_STATE.IN_PROGRESS;
+}
+
+function displayAllValidCells(cell, gameBoard) {
+  const processedCells = [];
+  const cellsToProcess = [cell];
+
+  while (cellsToProcess.length !== 0) {
+    const cellToProcess = cellsToProcess.pop();
+
+    if (
+      processedCells[cellToProcess.row] &&
+      processedCells[cellToProcess.row][cellToProcess.column]
+    ) {
+      continue;
+    }
+
+    const surroundingCells = getSurroundingCells(
+      gameBoard,
+      cellToProcess.row,
+      cellToProcess.column
+    );
+    const surroundingCellsToUncover = surroundingCells.filter(
+      cellToUncover => !cellToUncover.isFlagged && !cellToUncover.display
+    );
+    surroundingCellsToUncover.forEach(cellToUncover => {
+      cellToUncover.display = true;
+      if (cellToUncover.surroundingMines === 0) {
+        cellsToProcess.push(cellToUncover);
+      }
+    });
+
+    if (processedCells[cellToProcess.row] === undefined) {
+      processedCells[cellToProcess.row] = [];
+    }
+    processedCells[cellToProcess.row][cellToProcess.column] = cellToProcess;
+  }
+
+  return processedCells.reduce(
+    (acc, curr) => (curr ? acc.concat(...curr.filter(col => col)) : curr),
+    []
+  );
 }
