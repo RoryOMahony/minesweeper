@@ -10,8 +10,17 @@ const GameControl = ({ gameState, gameDispatch }) => {
     });
   }
 
-  const iconToDisplayStyle =
-    gameState === GAME_STATE.LOST ? "fa-frown-o" : "fa-smile-o";
+  function calculateDisplayStyle() {
+    if (gameState === GAME_STATE.LOST) {
+      return "fa-frown-o";
+    }
+    if (gameState === GAME_STATE.WON) {
+      return "fa-trophy";
+    }
+    return "fa-smile-o";
+  }
+
+  const iconToDisplayStyle = calculateDisplayStyle();
 
   return (
     <div className="cell-container" onClick={handleClick}>
