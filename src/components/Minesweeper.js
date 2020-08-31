@@ -1,16 +1,17 @@
 import React, { useReducer, useEffect } from "react";
 import GameBoard from "./gameboard/GameBoard";
-import GameCreator from "../objects/GameCreator";
+import { createGameFromDifficulty } from "../objects/GameCreator";
 import "./Minesweeper.css";
 import { GameReducer, BOARD_REDUCER_ACTIONS } from "../reducers/GameReducer";
 import GameInfo from "./gameinfo/GameInfo";
 import { GAME_STATE } from "../objects/GameState";
 import { DifficultyContainer } from "./difficulty/DifficultyContainer";
+import { DIFFICULTIES } from "./difficulty/Difficulties";
 
 export const Minesweeper = () => {
   const [game, gameDispatch] = useReducer(
     GameReducer,
-    new GameCreator().createGame(10, 10, 10)
+    createGameFromDifficulty(DIFFICULTIES.BEGINNER)
   );
 
   useEffect(() => {
@@ -33,7 +34,12 @@ export const Minesweeper = () => {
     <div id="game">
       <DifficultyContainer gameDispatch={gameDispatch}></DifficultyContainer>
       <GameInfo game={game} gameDispatch={gameDispatch}></GameInfo>
-      <GameBoard gameBoard={game} gameBoardDispatch={gameDispatch}></GameBoard>
+      <GameBoard
+        gameState={game.gameState}
+        gameBoard={game.board}
+        numOfMines={game.numOfMines}
+        gameBoardDispatch={gameDispatch}
+      ></GameBoard>
     </div>
   );
 };
