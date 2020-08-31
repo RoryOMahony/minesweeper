@@ -11,51 +11,51 @@ export default class GameObject {
   }
 }
 
-export function setGameState(gameBoard, gameState) {
-  gameBoard.gameState = gameState;
+export function setGameState(game, gameState) {
+  game.gameState = gameState;
 }
 
-export function setScore(gameBoard, score){
-  gameBoard.score = score;
+export function setScore(game, score){
+  game.score = score;
 }
 
-export function decreaseFlagsAvailable(gameBoard){
-  gameBoard.flagsAvailable -= 1;
+export function decreaseFlagsAvailable(game){
+  game.flagsAvailable -= 1;
 }
 
-export function increaseFlagsAvailable(gameBoard){
-  gameBoard.flagsAvailable += 1;
+export function increaseFlagsAvailable(game){
+  game.flagsAvailable += 1;
 }
 
-export function getRowCount(gameBoard) {
-  return gameBoard.board.length;
+export function getRowCount(board) {
+  return board.length;
 }
 
-export function getColumnCount(gameBoard) {
-  const rowCount = getRowCount(gameBoard);
+export function getColumnCount(board) {
+  const rowCount = getRowCount(board);
   if (rowCount === 0) {
     return 0;
   }
-  return gameBoard.board[0].length;
+  return board[0].length;
 }
 
-export function getCell(gameBoard, rowNum, colNum) {
-  const row = gameBoard.board[rowNum];
+export function getCell(board, rowNum, colNum) {
+  const row = board[rowNum];
   if (row === undefined) {
     return undefined;
   }
   return row[colNum];
 }
 
-export function setCell(gameBoard, rowNum, colNum, cell) {
-  const row = gameBoard.board[rowNum];
+export function setCell(board, rowNum, colNum, cell) {
+  const row = board[rowNum];
   if (row === undefined) {
     return;
   }
   row[colNum] = cell;
 }
 
-export function getSurroundingCells(gameBoard, cellRowNum, cellColumnNum) {
+export function getSurroundingCells(board, cellRowNum, cellColumnNum) {
   let rowToCheck = cellRowNum - 1;
   let columnToCheck = cellColumnNum - 1;
 
@@ -69,7 +69,7 @@ export function getSurroundingCells(gameBoard, cellRowNum, cellColumnNum) {
         i,
         j,
         surroundingCells,
-        gameBoard
+        board
       );
     }
   }
@@ -83,10 +83,10 @@ function addSurroundingCell(
   rowToCheck,
   columnToCheck,
   surroundingCells,
-  gameBoard
+  board
 ) {
   if (cellRowNum !== rowToCheck || cellColumnNum !== columnToCheck) {
-    const cell = getCell(gameBoard, rowToCheck, columnToCheck);
+    const cell = getCell(board, rowToCheck, columnToCheck);
     if (cell !== undefined) {
       surroundingCells.push(cell);
     }
