@@ -1,3 +1,14 @@
 .number-display {
   color: black;
+  width: 100px;
+}
+
+.number-display-left-container {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.number-display-right-container {
+  display: flex;
+  justify-content: flex-end;
 }
