@@ -77,12 +77,12 @@ export const CustomDifficultyModal = ({ gameDispatch, hideModalCallback }) => {
             />
           </div>
           <div className="custom-difficulty-form-controls">
-            <button
+            <input
               className="custom-difficulty-form-control"
+              type="button"
+              value="Cancel"
               onClick={handleCancel}
-            >
-              Cancel
-            </button>
+            />
             <input
               className="custom-difficulty-form-control"
               type="submit"
