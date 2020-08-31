@@ -1,38 +1,61 @@
-import React from "react";
+import React, { useCallback } from "react";
 import Cell from "./Cell";
 import "../Flex.css";
 import { BOARD_REDUCER_ACTIONS } from "../../reducers/GameReducer";
+import { GAME_STATE } from "../../objects/GameState";
+import { calculateMinesToPlace } from "../../objects/GameCreator";
 
-const GameBoard = ({ gameBoard, gameBoardDispatch }) => {
-  function handleCellSelected(cell) {
-    gameBoardDispatch({
-      type: BOARD_REDUCER_ACTIONS.UNCOVER_CELL,
-      payload: cell
-    });
-  }
+const GameBoard = ({ gameState, gameBoard, numOfMines, gameBoardDispatch }) => {
+  const handleCellSelected = useCallback(
+    cell => {
+      if (gameState === GAME_STATE.NOT_STARTED) {
+        const minesToPlace = calculateMinesToPlace(gameBoard, numOfMines, cell);
 
-  function handleCellDoubleClick(cell) {
-    gameBoardDispatch({
-      type: BOARD_REDUCER_ACTIONS.UNCOVER_SURROUNDING_CELLS,
-      payload: cell
-    });
-  }
+        gameBoardDispatch({
+          type: BOARD_REDUCER_ACTIONS.INITIALISE_GAME,
+          payload: minesToPlace
+        });
+      }
 
-  function handleCellRightClick(cell) {
-    gameBoardDispatch({
-      type: BOARD_REDUCER_ACTIONS.TOGGLE_FLAGGED,
-      payload: cell
-    });
-  }
+      gameBoardDispatch({
+        type: BOARD_REDUCER_ACTIONS.UNCOVER_CELL,
+        payload: cell
+      });
+    },
+    [gameBoardDispatch, gameState, gameBoard, numOfMines]
+  );
+
+  const handleCellDoubleClick = useCallback(
+    cell => {
+      gameBoardDispatch({
+        type: BOARD_REDUCER_ACTIONS.UNCOVER_SURROUNDING_CELLS,
+        payload: cell
+      });
+    },
+    [gameBoardDispatch]
+  );
+
+  const handleCellRightClick = useCallback(
+    cell => {
+      gameBoardDispatch({
+        type: BOARD_REDUCER_ACTIONS.TOGGLE_FLAGGED,
+        payload: cell
+      });
+    },
+    [gameBoardDispatch]
+  );
+
+  const gameOver =
+    gameState === GAME_STATE.LOST || gameState === GAME_STATE.WON;
 
   return (
     <div>
-      {gameBoard.board.map((row, index) => {
+      {gameBoard.map((row, index) => {
         const column = row.map(cell => {
           return (
             <Cell
               cell={cell}
-              gameState={gameBoard.gameState}
+              gameOver={gameOver}
               cellSelectedCallBack={handleCellSelected}
               rightClickCallBack={handleCellRightClick}
               doubleClickCallBack={handleCellDoubleClick}
