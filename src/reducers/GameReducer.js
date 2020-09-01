@@ -186,16 +186,12 @@ function calculateGameState(gameBoard) {
 }
 
 function displayAllValidCells(cell, gameBoard) {
-  const processedCells = [];
+  const processedCells = new Set();
   const cellsToProcess = [cell];
 
   while (cellsToProcess.length !== 0) {
     const cellToProcess = cellsToProcess.pop();
-
-    if (
-      processedCells[cellToProcess.row] &&
-      processedCells[cellToProcess.row][cellToProcess.column]
-    ) {
+    if (processedCells.has(cellToProcess)) {
       continue;
     }
 
@@ -204,24 +200,19 @@ function displayAllValidCells(cell, gameBoard) {
       cellToProcess.row,
       cellToProcess.column
     );
-    const surroundingCellsToUncover = surroundingCells.filter(
-      cellToUncover => !cellToUncover.isFlagged && !cellToUncover.display
-    );
-    surroundingCellsToUncover.forEach(cellToUncover => {
-      cellToUncover.display = true;
-      if (cellToUncover.surroundingMines === 0) {
-        cellsToProcess.push(cellToUncover);
-      }
-    });
+    surroundingCells
+      .filter(
+        cellToUncover => !cellToUncover.isFlagged && !cellToUncover.display
+      )
+      .forEach(cellToUncover => {
+        cellToUncover.display = true;
+        if (cellToUncover.surroundingMines === 0) {
+          cellsToProcess.push(cellToUncover);
+        }
+      });
 
-    if (processedCells[cellToProcess.row] === undefined) {
-      processedCells[cellToProcess.row] = [];
-    }
-    processedCells[cellToProcess.row][cellToProcess.column] = cellToProcess;
+    processedCells.add(cellToProcess);
   }
 
-  return processedCells.reduce(
-    (acc, curr) => (curr ? acc.concat(...curr.filter(col => col)) : curr),
-    []
-  );
+  return [...processedCells];
 }
