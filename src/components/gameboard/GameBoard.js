@@ -1,6 +1,7 @@
 import React, { useCallback } from "react";
 import Cell from "./Cell";
 import "../Flex.css";
+import "./GameBoard.css";
 import { BOARD_REDUCER_ACTIONS } from "../../reducers/GameReducer";
 import { GAME_STATE } from "../../objects/GameState";
 import { calculateMinesToPlace } from "../../objects/GameCreator";
@@ -49,7 +50,7 @@ const GameBoard = ({ gameState, gameBoard, numOfMines, gameBoardDispatch }) => {
     gameState === GAME_STATE.LOST || gameState === GAME_STATE.WON;
 
   return (
-    <div>
+    <div className="game-board-container">
       {gameBoard.map((row, index) => {
         const column = row.map(cell => {
           return (

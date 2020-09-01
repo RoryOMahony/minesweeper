@@ -31,15 +31,19 @@ export const Minesweeper = () => {
   }, [game.gameState]);
 
   return (
-    <div id="game">
-      <DifficultyContainer gameDispatch={gameDispatch}></DifficultyContainer>
-      <GameInfo game={game} gameDispatch={gameDispatch}></GameInfo>
-      <GameBoard
-        gameState={game.gameState}
-        gameBoard={game.board}
-        numOfMines={game.numOfMines}
-        gameBoardDispatch={gameDispatch}
-      ></GameBoard>
+    <div>
+      <div>
+        <DifficultyContainer gameDispatch={gameDispatch}></DifficultyContainer>
+      </div>
+      <div id="game">
+        <GameInfo game={game} gameDispatch={gameDispatch}></GameInfo>
+        <GameBoard
+          gameState={game.gameState}
+          gameBoard={game.board}
+          numOfMines={game.numOfMines}
+          gameBoardDispatch={gameDispatch}
+        ></GameBoard>
+      </div>
     </div>
   );
 };

@@ -1,0 +1,9 @@
+.game-board-container {
+  border-width: 5px;
+  border-style: inset;
+  border-top-color: #80808080;
+  border-right-color: #efefeffa;
+  border-bottom-color: #efefeffa;
+  border-left-color: #80808080;
+  margin: 15px
+}

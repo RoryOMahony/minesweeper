@@ -1,6 +1,7 @@
 .number-display {
   color: black;
   width: 100px;
+  margin: 5px 10px 5px 10px;
 }
 
 .number-display-left-container {
