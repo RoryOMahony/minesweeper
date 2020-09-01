@@ -2,6 +2,7 @@ import React, { useReducer, useEffect } from "react";
 import GameBoard from "./gameboard/GameBoard";
 import { createGameFromDifficulty } from "../objects/GameCreator";
 import "./Minesweeper.css";
+import "./Flex.css";
 import { GameReducer, BOARD_REDUCER_ACTIONS } from "../reducers/GameReducer";
 import GameInfo from "./gameinfo/GameInfo";
 import { GAME_STATE } from "../objects/GameState";
@@ -31,7 +32,7 @@ export const Minesweeper = () => {
   }, [game.gameState]);
 
   return (
-    <div>
+    <div className="flex-column flex-cross-axis-center">
       <div>
         <DifficultyContainer gameDispatch={gameDispatch}></DifficultyContainer>
       </div>

@@ -50,27 +50,27 @@ const GameBoard = ({ gameState, gameBoard, numOfMines, gameBoardDispatch }) => {
     gameState === GAME_STATE.LOST || gameState === GAME_STATE.WON;
 
   return (
-    <div className="game-board-container">
-      {gameBoard.map((row, index) => {
-        const column = row.map(cell => {
+      <div className="flex-column game-board-container">
+        {gameBoard.map((row, index) => {
+          const column = row.map(cell => {
+            return (
+              <Cell
+                cell={cell}
+                gameOver={gameOver}
+                cellSelectedCallBack={handleCellSelected}
+                rightClickCallBack={handleCellRightClick}
+                doubleClickCallBack={handleCellDoubleClick}
+                key={cell.column}
+              ></Cell>
+            );
+          });
           return (
-            <Cell
-              cell={cell}
-              gameOver={gameOver}
-              cellSelectedCallBack={handleCellSelected}
-              rightClickCallBack={handleCellRightClick}
-              doubleClickCallBack={handleCellDoubleClick}
-              key={cell.column}
-            ></Cell>
+            <div className="flex-row" key={index}>
+              {column}
+            </div>
           );
-        });
-        return (
-          <div className="flex-row" key={index}>
-            {column}
-          </div>
-        );
-      })}
-    </div>
+        })}
+      </div>
   );
 };
 

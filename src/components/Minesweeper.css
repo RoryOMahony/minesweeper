@@ -2,4 +2,5 @@
   background-color: #bdbdbd;
   display: flex;
   flex-direction: column;
+  margin: 20px;
 }

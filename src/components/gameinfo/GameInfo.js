@@ -6,19 +6,13 @@ import GameControl from "./GameControl";
 
 const GameInfo = ({ game, gameDispatch }) => {
   return (
-    <div className="flex-row flex-main-axis-space-between game-info-container">
-      <NumberDisplay
-        number={game.flagsAvailable}
-        displayStyle="number-display-left-container"
-      ></NumberDisplay>
+    <div className="flex-row flex-main-axis-space-between game-info">
+      <NumberDisplay number={game.flagsAvailable}></NumberDisplay>
       <GameControl
         gameState={game.gameState}
         gameDispatch={gameDispatch}
       ></GameControl>
-      <NumberDisplay
-        number={game.score}
-        displayStyle="number-display-right-container"
-      ></NumberDisplay>
+      <NumberDisplay number={game.score}></NumberDisplay>
     </div>
   );
 };

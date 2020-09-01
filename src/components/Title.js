@@ -4,7 +4,7 @@ import "./Flex.css";
 const Title = ({ text }) => {
   return (
     <div className="flex-row flex-main-axis-center">
-      <h2>{text}</h2>
+      <h1>{text}</h1>
     </div>
   );
 };

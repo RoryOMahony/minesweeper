@@ -1,9 +1,13 @@
 .App {
   background-color: #282c34;
   min-height: 100vh;
+  min-width: 100vw;
   display: flex;
   flex-direction: column;
-  font-size: calc(10px + 2vmin);
+  font-size: 25px;
   color: white;
 }
 
+button{
+  font-size: 20px;
+}

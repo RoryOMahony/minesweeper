@@ -1,6 +1,7 @@
 import React from "react";
 import "../gameboard/Cell.css";
 import "../Flex.css";
+import "./GameControl.css";
 import { GAME_STATE } from "../../objects/GameState";
 import { BOARD_REDUCER_ACTIONS } from "../../reducers/GameReducer";
 

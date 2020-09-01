@@ -4,14 +4,5 @@
   padding-left: 5px;
   padding-right: 5px;
   background-color: black;
-}
-
-.number-display-left-container {
-  display: flex;
-  justify-content: flex-start;
-}
-
-.number-display-right-container {
-  display: flex;
-  justify-content: flex-end;
+  font-family: 'Share Tech Mono', monospace;
 }
