@@ -13,3 +13,4 @@
 - The project css could be updated to make the game/components more responsive
 - The code in the reducer could be refactored to reduce the size of the class
 - The game does not handle large grids size well (e.g. 100x100) and there is a noticeable delay when the game is interacted with at these larger grid sizes. Dev tools have shown this to be due to the amount of components being re-rendered when the game state is updated
+- In the old Minesweeper game a player could uncover surrounding cells by pressing both the right and left mouse buttons at the same time. This project uses a double click for this functionality, but could include this feature
