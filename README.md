@@ -1,5 +1,7 @@
 # Minesweeper
 
+https://roryomahony.github.io/minesweeper/
+
 ## Project Aims:
 
 - To create a game that resembled the old minesweeper game found on Windows systems
