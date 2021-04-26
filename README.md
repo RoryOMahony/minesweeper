@@ -2,7 +2,7 @@
 
 ## Project Aims:
 
-- To create a game that resembed the old minesweeper game found on Windows systems
+- To create a game that resembled the old minesweeper game found on Windows systems
 - Learn what the different React hooks are and how they should be used by components
 - Learn how to correctly update state using react hooks
 
